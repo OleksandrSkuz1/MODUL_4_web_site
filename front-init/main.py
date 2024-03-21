@@ -7,12 +7,11 @@ class MyFirstFramework(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(b"hello world")
-
+        with open('index.html', 'rb') as file:
+            self.wfile.write(file.read())
 
     def do_POST(self):
         pass
-
 
 def run_server():
     address = ('localhost', 8080)
@@ -36,8 +35,3 @@ if __name__ == '__main__':
 
 
 
-        #json.dump(response, wfile)
-
-
-# server = HTTPServer(("localhost", 8001), FriendsRequestHandler)
-# server.serve_forever()
