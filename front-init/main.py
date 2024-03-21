@@ -1,3 +1,4 @@
+import urllib.parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 
@@ -5,6 +6,11 @@ class MyFirstFramework(BaseHTTPRequestHandler):
 
     # GET POST PUT PATCH DELETE
     def do_GET(self):
+        route = urllib.parse.urlparse(self.path)
+        match route.path:
+            case '/':
+
+
         self.send_response(200)
         self.end_headers()
         with open('index.html', 'rb') as file:
@@ -14,7 +20,7 @@ class MyFirstFramework(BaseHTTPRequestHandler):
         pass
 
 def run_server():
-    address = ('localhost', 8080)
+    address = ('localhost', 5000)
     http_server = HTTPServer(address, MyFirstFramework)
     try:
         http_server.serve_forever()
