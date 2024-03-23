@@ -1,10 +1,10 @@
-import keyword
+import mimetypes
 import urllib.parse
 from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
-DASE_DIR = Path()
+BASE_DIR = Path()
 # Створення HTTP Server:
 class MyFirstFramework(BaseHTTPRequestHandler):
 
@@ -12,15 +12,15 @@ class MyFirstFramework(BaseHTTPRequestHandler):
         route = urllib.parse.urlparse(self.path)           # наш роутер
         match route.path:                                  # маршрут path
             case '/':                                      # наша case структура
-                self.sent_html('index.html')
+                self.send_html('index.html')
             case '/message.html':  # наша case структура
-                self.sent_html('message.html')
+                self.send_html('message.html')
             case _:
                 file = BASE_DIR.joinpath(route.path[1:])
-                if file.exist():                           # якщо файл існує (метод exist):
+                if file.exists():                           # якщо файл існує (метод exists):
                     self.send_static(file)                 # передаємо цей файл
                 else:                                      # якщо не існує: передаємо помилку 404
-                    self.send_html(filename='error.html', status_code='404')
+                    self.send_html(filename='error.html', status_code=404)
 
         print(urllib.parse.urlparse(self.path))            # шлях обробки наших маршрутів(path,params,query,fragment)
 
@@ -39,6 +39,7 @@ class MyFirstFramework(BaseHTTPRequestHandler):
     # функція обробки статичних файлів
     def send_static(self, filename, status_code=200):
         self.send_response(status_code)
+        mime_type, *_ = mimetypes.guess_type(filename)
         self.send_header('Content-Type', 'text/html')
         self.end_headers()
         with open(filename, 'rb') as file:
