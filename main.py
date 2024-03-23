@@ -1,29 +1,48 @@
 import keyword
 import urllib.parse
+from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 
+DASE_DIR = Path()
 # Створення HTTP Server:
 class MyFirstFramework(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        route = urllib.parse.urlparse(self.path)         # наш роутер
-        match route.path:                                # маршрут path
-            case '/':                                    # наша case структура
+        route = urllib.parse.urlparse(self.path)           # наш роутер
+        match route.path:                                  # маршрут path
+            case '/':                                      # наша case структура
+                self.sent_html('index.html')
+            case '/message.html':  # наша case структура
+                self.sent_html('message.html')
+            case _:
+                file = BASE_DIR.joinpath(route.path[1:])
+                if file.exist():                           # якщо файл існує (метод exist):
+                    self.send_static(file)                 # передаємо цей файл
+                else:                                      # якщо не існує: передаємо помилку 404
+                    self.send_html(filename='error.html', status_code='404')
 
-
-        print(urllib.parse.urlparse(self.path))          # шлях обробки наших маршрутів(path,params,query,fragment)
+        print(urllib.parse.urlparse(self.path))            # шлях обробки наших маршрутів(path,params,query,fragment)
 
     def do_POST(self):
         pass
 
     # функція для читання всіх наших html файлів (filename-ім'я відповідного файлу)
-    def sent_html(self, filename, status_code=200):
+    def send_html(self, filename, status_code=200):
         self.send_response(status_code)
-        self.send_header(keyword: '')
+        self.send_header(keyword='Content-Type', value='text/html')
         self.end_headers()
-        with open(filename, 'rb') as file:               # відправляємо на читання наш файл(filename).html
-            self.wfile.write(file.read())                # за доп. методу read читаємо файл.html
+        with open(filename, 'rb') as file:                   # відправляємо на читання наш файл(filename).html
+            self.wfile.write(file.read())                    # за доп. методу read читаємо файл.html
+
+
+    # функція обробки статичних файлів
+    def send_static(self, filename, status_code=200):
+        self.send_response(status_code)
+        self.send_header('Content-Type', 'text/html')
+        self.end_headers()
+        with open(filename, 'rb') as file:
+            self.wfile.write(file.read())
 
 
 # функція для запуску серверу
