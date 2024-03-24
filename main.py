@@ -8,7 +8,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from socket_server import SocketServer
 from client_server import main as run_client
 
-BASE_DIR = Path
+BASE_DIR = Path()
 
 # Створення HTTP Server:
 class MyFirstFramework(BaseHTTPRequestHandler):
@@ -18,7 +18,7 @@ class MyFirstFramework(BaseHTTPRequestHandler):
         match route.path:                                  # маршрут path
             case '/':                                      # наша case структура
                 self.send_html('index.html')
-            case '/message.html':  # наша case структура
+            case '/message.html':
                 self.send_html('message.html')
             case _:
                 file = BASE_DIR.joinpath(route.path[1:])
@@ -40,7 +40,6 @@ class MyFirstFramework(BaseHTTPRequestHandler):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             sock.sendto(json.dumps(post_data_dict).encode('utf-8'), ('localhost', 5000))
 
-        # Після відправлення можна перенаправити користувача на іншу сторінку або в             !!!!!!!!
 
     # функція для читання всіх наших html файлів (filename-ім'я відповідного файлу)
     def send_html(self, filename, status_code=200):

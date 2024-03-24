@@ -4,7 +4,6 @@ import threading
 import os
 from datetime import datetime
 
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STORAGE_DIR = os.path.join(BASE_DIR, 'storage')
 
@@ -17,9 +16,10 @@ class SocketServer(threading.Thread):
 
     def run(self):
         while self.running:
-            data, _ = self.socket.recvfrom(1024)
+            data, address = self.socket.recvfrom(1024)
             message = json.loads(data.decode('utf-8'))
             self.process_message(message)
+            self.socket.sendto(b"Message received and processed successfully", address)
 
     def process_message(self, message):
         message['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
